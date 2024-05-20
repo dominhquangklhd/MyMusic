@@ -13,17 +13,19 @@ class TrackUploadForm(BaseModel):
 
 
 class TrackSimpleResponse(BaseModel):
-    id: uuid.UUID
+    id: str
     name: str
     length: int
+    track_image_path: str | None = None
+    artists: list[ArtistSimpleResponse]
+    album: str
+    audio_url: str
 
 
 from app.schema.album import AlbumSimpleResponse
 
 
 class TrackResponse(TrackSimpleResponse):
-    artists: list[ArtistSimpleResponse]
-    album: AlbumSimpleResponse | None = None
     categories: list[CategoryResponse] | None = None
 
 

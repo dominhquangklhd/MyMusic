@@ -49,7 +49,7 @@ ArtistAlbum = Table(
 class Track(Base):
     __tablename__ = "tracks"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     name = Column(String, unique=True, index=True, nullable=False)
     length = Column(Integer, nullable=True)
 
@@ -70,8 +70,8 @@ class Track(Base):
 class Artist(Base):
     __tablename__ = "artists"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    name = Column(String, nullable=False, unique=True, index=True)
     description = Column(String, nullable=True)
 
     tracks = relationship(
@@ -90,7 +90,7 @@ class Artist(Base):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
@@ -110,8 +110,8 @@ class User(Base):
 class Album(Base):
     __tablename__ = "albums"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    name = Column(String, nullable=False, unique=True)
 
     artists = relationship(
         "Artist", secondary=ArtistAlbum, back_populates="albums", lazy=True
@@ -133,8 +133,8 @@ class Playlist(Base):
 class Category(Base):
     __tablename__ = "categories"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, unique=True, nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    name = Column(String, unique=True, nullable=False, index=True)
 
     tracks = relationship(
         "Track", secondary=TrackCategory, back_populates="categories", lazy=True
@@ -144,10 +144,21 @@ class Category(Base):
 class Admin(Base):
     __tablename__ = "admins"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     name = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, unique=True, nullable=False)
+
+
+class UserMetadata(Base):
+    __tablename__ = "usermetas"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID, ForeignKey("users.id"))
+    user = relationship("User", lazy=True)
+
+    track_id = Column(UUID, ForeignKey("tracks.id"))
+    track = relationship("Track", lazy=True)
 
 
 """

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter, HTTPException, Depends, Body, status
 import uuid
 from app.api.auth import security
 from pydantic import BaseModel
@@ -7,6 +7,8 @@ import app.service.user as user_service
 from starlette.responses import RedirectResponse
 from authx import TokenPayload, RequestToken
 import app.model.models as models
+from fastapi.responses import JSONResponse
+from app.schema.track import TrackResponse
 
 user_router = APIRouter(prefix="/users", tags=["User"])
 
@@ -39,7 +41,9 @@ def refresh(refresh_payload: TokenPayload = Depends(security.refresh_token_requi
         refresh_payload.sub,
         fresh=False,
     )
-    return {"access_token": access_token}
+    return JSONResponse(
+        content={"access_token": access_token}, status_code=status.HTTP_201_CREATED
+    )
 
 
 @user_router.get("/whoami")
@@ -64,11 +68,6 @@ def get_all_users():
     return response
 
 
-@user_router.get("/search/{name}")
-def find_users_with_name(name: str):
-    pass
-
-
 @user_router.delete(
     "/profile/delete", dependencies=[Depends(security.access_token_required)]
 )
@@ -77,5 +76,38 @@ def delete_user(payload: TokenPayload = Depends(security.access_token_required))
     try:
         id = uuid.UUID(id, version=4)
         user_service.delete_user_by_id(id)
+    except Exception as e:
+        raise HTTPException(401, detail={"message": str(e)})
+
+
+@user_router.get(
+    "/me/last",
+    dependencies=[Depends(security.access_token_required)],
+    response_model=TrackResponse,
+)
+def get_last_play_track(
+    payload: TokenPayload = Depends(security.access_token_required),
+):
+    id = getattr(payload, "sub")
+    try:
+        id = uuid.UUID(id, version=4)
+        track_response = user_service.get_current_track(id=id)
+        return track_response
+    except Exception as e:
+        raise HTTPException(401, detail={"message": str(e)})
+
+
+@user_router.put(
+    "/me/now/{track_id}", dependencies=[Depends(security.access_token_required)]
+)
+def update_last_play_track(
+    track_id: uuid.UUID,
+    payload: TokenPayload = Depends(security.access_token_required),
+):
+    id = getattr(payload, "sub")
+    try:
+        id = uuid.UUID(id, version=4)
+        meta = user_service.update_current_track(user_id=id, track_id=track_id)
+        return meta
     except Exception as e:
         raise HTTPException(401, detail={"message": str(e)})

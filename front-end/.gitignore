@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+/venv
+handle_csv.ipynb
 
 # testing
 /coverage

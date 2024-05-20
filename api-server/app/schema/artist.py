@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 import uuid
-from app.model import models
 
 
 class ArtistSimpleResponse(BaseModel):
-    id: uuid.UUID
+    id: str
     name: str
+    artist_image_path: str | None = None
 
 
 class ArtistUploadForm(BaseModel):

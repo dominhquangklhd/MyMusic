@@ -5,7 +5,7 @@ import uuid
 
 class PlaylistUploadForm(BaseModel):
     name: str
-    user_id: uuid.UUID
+    user_id: uuid.UUID | None = None
 
 
 class PlaylistUpdateForm(BaseModel):
@@ -13,13 +13,18 @@ class PlaylistUpdateForm(BaseModel):
 
 
 class PlaylistSimpleResponse(BaseModel):
-    id: uuid.UUID
+    id: str
     name: str
 
 
-from app.schema.track import TrackSimpleResponse
+from app.schema.track import TrackSimpleResponse, TrackResponse
 
 
 class PlaylistDetailResponse(PlaylistSimpleResponse):
     user: UserSimpleResponse
-    tracks: list[TrackSimpleResponse]
+    tracks: list[TrackResponse] | None = None
+
+
+class PlaylistModifyForm(BaseModel):
+    rename: str | None = None
+    track_id_list: list[uuid.UUID]
