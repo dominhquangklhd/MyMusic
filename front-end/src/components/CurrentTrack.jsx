@@ -173,6 +173,7 @@ export default function CurrentTrack() {
             {currentPlaying && currentPlaying.id && (
                 <div className="track">
                     <div className="track__image">
+                        {console.log(currentPlaying?.image)}
                         <img src={currentPlaying?.image} alt="currentPlaying" />
                     </div>
                     <div className="track__info">

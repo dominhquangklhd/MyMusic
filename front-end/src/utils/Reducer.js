@@ -6,10 +6,14 @@ export const initialState = {
     isAuthenticated: false,
     playlists: [],
     userInfo: null,
+
     selectedPlaylistId: null,
     selectedPlaylist: null,
     selectedSong: null,
     selectedSongId: null,
+    selectedArtistId: null,
+    selectedArtistTracks: null,
+
     newestSongs: null,
     randomSongs: null,
     isOpenDeletePlaylist: false,
@@ -29,6 +33,18 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 token: action.token,
+            }
+        }
+        case reducerCases.SET_ARTIST_TRACKS: {
+            return {
+                ...state,
+                selectedArtistTracks: action.selectedArtistTracks,
+            }
+        }
+        case reducerCases.SET_ARTIST_ID: {
+            return {
+                ...state,
+                selectedArtistId: action.selectedArtistId,
             }
         }
         case reducerCases.SET_ISOPEN_DELETE_PLAYLIST: {
