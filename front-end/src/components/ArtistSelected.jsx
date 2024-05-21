@@ -6,17 +6,15 @@ import axios from "axios";
 import { reducerCases } from "../utils/Constants";
 import { changeTrack } from "./CurrentTrack";
 import { FaPlay } from "react-icons/fa";
-import { IoTrashOutline } from "react-icons/io5";
-import { toast } from "react-toastify";
 
-export default function PlaylistSelected({ headerBackground }) {
-    const [{ token, selectedPlaylistId, selectedPlaylist, readyToListen }, dispatch] = useStateProvider();
+export default function ArtistSelected({ headerBackground }) {
+    const [{ token, selectedArtistTracks, selectedArtistId, readyToListen }, dispatch] = useStateProvider();
     const [hoveredTrackId, setHoveredTrackId] = useState(null);
 
     useEffect(() => {
-        const getInitialPlaylist = async () => {
+        const getArtistTracks = async () => {
             const response = await axios.get(
-                `http://localhost:8000/playlists/${selectedPlaylistId}`,
+                `http://localhost:8000/artists/${selectedArtistId}/tracks`,
                 {
                     headers: {
                         Authorization: "Bearer " + token,
@@ -24,32 +22,25 @@ export default function PlaylistSelected({ headerBackground }) {
                     },
                 }
             );
-            const selectedPlaylist = {
-                id: response.data.id,
-                playlist_name: response.data.name,
-                user_id: response.data.user.id,
-                user_name: response.data.user.username,
-                tracks: response.data.tracks.map((track) => ({
-                    id: track.id,
-                    name: track.name,
-                    length: track.length,
-                    track_image_path: `http://localhost:8000/static/${track.track_image_path}`,
-                    artist: track.artists[0].name,
-                    album: track.album,
+            const selectedArtistTracks = response?.data?.map((track) => ({
+                id: track.id,
+                name: track.name,
+                length: track.length,
+                track_image_path: track.track_image_path,
+                artists: track.artists.map((artist) => ({
+                    id: artist.id,
+                    name: artist.name,
                 })),
-            };
-            dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist: selectedPlaylist })
+                artist_name: track.artists[0].name,
+                artist_image_path: `http://localhost:8000/static/${track.artists[0].artist_image_path}`,
+                album: track.album,
+                song: `http://localhost:8000/${track.audio_url}`,
+            }))
+            console.log(response?.data);
+            dispatch({ type: reducerCases.SET_ARTIST_TRACKS, selectedArtistTracks: selectedArtistTracks })
         };
-        if (token) {
-            getInitialPlaylist();
-            const intervalId = setInterval(getInitialPlaylist, 3000);
-            return () => clearInterval(intervalId);
-        }
-    }, [token, dispatch, selectedPlaylistId]);
-
-    const makeSureToDelete = () => {
-        dispatch({ type: reducerCases.SET_ISOPEN_DELETE_PLAYLIST, isOpenDeletePlaylist: true })
-    }
+        getArtistTracks();
+    }, [token, dispatch, selectedArtistId]);
 
     const calculateTime = (sec) => {
         const minutes = Math.floor(sec / 60);
@@ -59,53 +50,16 @@ export default function PlaylistSelected({ headerBackground }) {
         return `${returnMin}:${returnSec}`;
     };
 
-    const removeTrack = async (token, removeTrackId, playlistId) => {
-        const userConfirmed = window.confirm('Are you sure you want to remove it?');
-        if (userConfirmed) {
-            const response = await axios.get(
-                `http://localhost:8000/playlists/${playlistId}`,
-                {
-                    headers: {
-                        Authorization: "Bearer " + token,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            const curTrack = response.data.tracks.map((track) =>
-                track.id
-            );
-            const newCurTrack = curTrack.filter(id => id !== removeTrackId);
-            const response2 = await axios.patch(
-                `http://localhost:8000/playlists/${playlistId}`,
-                {
-                    "track_id_list": newCurTrack
-                },
-                {
-                    headers: {
-                        Authorization: "Bearer " + token,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            toast.success("Removed!")
-        } else {
-
-        }
-    };
-
     return <Container headerBackground={headerBackground}>
-        {selectedPlaylist && (
+        {selectedArtistTracks && (
             <>
-
                 <div className="playlist">
                     <div className="image">
-                        <img src={
-                            // selectedPlaylist.tracks.length !== 0 ? selectedPlaylist.tracks[0].track_image_path :
-                            `https://www.gravatar.com/avatar/${selectedPlaylist.id.replace(/-/g, "")}?s=64&d=identicon&r=PG`} alt={selectedPlaylist.playlist_name}></img>
+                        <img src={selectedArtistTracks[0]?.artist_image_path} alt={selectedArtistTracks[0].artist_name}></img>
                     </div>
                     <div className="details">
-                        <span className="type">PLAYLIST</span>
-                        <h1 className="title">{selectedPlaylist.playlist_name}</h1>
+                        <span className="type">Artist</span>
+                        <h1 className="title">{selectedArtistTracks[0].artist_name}</h1>
                     </div>
                 </div>
                 <div>
@@ -130,21 +84,13 @@ export default function PlaylistSelected({ headerBackground }) {
                                 group-hover:translate-y-0
                                 hover:scale-110">
                             <FaPlay className="text-black" onClick={() => {
-                                changeTrack(selectedPlaylist.tracks[0].id, token, readyToListen, dispatch);
+                                changeTrack(selectedArtistTracks[0]?.id, token, readyToListen, dispatch, selectedArtistTracks[0]);
                             }}></FaPlay>
-                        </button>
-                        <button className="
-                            transition
-                            order-last
-                            mr-8
-                            scale-150
-                            hover:scale-170">
-                            <IoTrashOutline className="text-white" onClick={() => makeSureToDelete()}></IoTrashOutline>
                         </button>
                     </div>
                 </div>
                 <div className="list">
-                    {selectedPlaylist.tracks.length !== 0 ? (
+                    {selectedArtistTracks.length !== 0 ? (
                         <>
                             <div className="header__row">
                                 <div className="col">
@@ -161,20 +107,20 @@ export default function PlaylistSelected({ headerBackground }) {
                                 </div>
                             </div>
                             <div className="tracks">
-                                {selectedPlaylist.tracks.map(
+                                {selectedArtistTracks.map(
                                     ({
                                         id,
                                         name,
                                         length,
                                         track_image_path,
-                                        artist,
+                                        artist_name,
                                         album
                                     }, index) => {
                                         return (
                                             <div
                                                 className="row"
                                                 key={id}
-                                                onClick={() => changeTrack(id, token, readyToListen, dispatch)}
+                                                onClick={() => changeTrack(id, token, readyToListen, dispatch, selectedArtistTracks[index])}
                                                 onMouseEnter={() => setHoveredTrackId(id)} // Khi trỏ vào bài hát, set hoveredTrackId
                                                 onMouseLeave={() => setHoveredTrackId(null)} // Khi rời khỏi bài hát, reset hoveredTrackId
                                             >
@@ -183,11 +129,11 @@ export default function PlaylistSelected({ headerBackground }) {
                                                 </div>
                                                 <div className="col detail">
                                                     <div className="image">
-                                                        <img src={track_image_path} alt="track" />
+                                                        <img src={`http://localhost:8000/static/${track_image_path}`} alt="track" />
                                                     </div>
                                                     <div className="info">
                                                         <span className="name">{name}</span>
-                                                        <span>{artist}</span>
+                                                        <span>{artist_name}</span>
                                                     </div>
                                                 </div>
                                                 <div className="col">
@@ -195,16 +141,6 @@ export default function PlaylistSelected({ headerBackground }) {
                                                 </div>
                                                 <div className="col">
                                                     <span>{calculateTime(length)}</span>
-                                                </div>
-                                                <div className="col ml-5 flex justify-center items-center">
-                                                    {hoveredTrackId === id && (
-                                                        <IoTrashOutline className="text-red-500 z-[10] rounded-full hover:scale-150 transition-transform duration-200"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                removeTrack(token, id, selectedPlaylistId);
-                                                            }}
-                                                        />
-                                                    )}
                                                 </div>
                                             </div>
                                         )

@@ -2,6 +2,7 @@ import { useStateProvider } from "../utils/StateProvider";
 import SongItem from "./SongItem";
 import { reducerCases } from "../utils/Constants";
 import { Link } from "react-router-dom";
+import ArtistItem from "./ArtistItem";
 
 export default function SearchContent() {
     const [{ filterItems }, dispatch] = useStateProvider();
@@ -10,6 +11,11 @@ export default function SearchContent() {
     const selectSong = (selectedSongId) => {
         dispatch({ type: reducerCases.SET_SONG_ID, selectedSongId: selectedSongId })
     }
+
+    const selectArtist = (selectedArtistId) => {
+        dispatch({ type: reducerCases.SET_ARTIST_ID, selectedArtistId: selectedArtistId })
+    }
+
     return (
         <div>
             {!isEmptyFilterItems ? (
@@ -63,13 +69,18 @@ export default function SearchContent() {
                             2xl:grid-cols-8
                             gap-4">
                             {filterItems[1].map((artist) => (
-                                <div
-                                    key={artist?.id}
-                                    className="flex items-center gap-x-4 w-full">
-                                    <div className="flex-1 text-white">
-                                        {/* <SongItem data={artist} /> */}
-                                        {artist?.name}
-                                    </div>
+                                <div key={artist?.id}>
+                                    <Link to="/artistview" onClick={() => selectArtist(artist?.id)}>
+                                        <div className="flex-1 text-white">
+                                            <ArtistItem
+                                            data={{
+                                                id: artist?.id,
+                                                name: artist?.name,
+                                                artist_image_path: artist?.artist_image_path,
+                                                description: artist?.description,
+                                            }} />
+                                        </div>
+                                    </Link>
                                 </div>
                             ))}
                         </div>

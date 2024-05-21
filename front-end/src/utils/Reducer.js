@@ -6,10 +6,14 @@ export const initialState = {
     isAuthenticated: false,
     playlists: [],
     userInfo: null,
+
     selectedPlaylistId: null,
     selectedPlaylist: null,
     selectedSong: null,
     selectedSongId: null,
+    selectedArtistId: null,
+    selectedArtistTracks: null,
+
     newestSongs: null,
     randomSongs: null,
     isOpenDeletePlaylist: false,
@@ -17,6 +21,7 @@ export const initialState = {
     isQuery: false,
     filterItems: [[], [], []],
     currentPlaying: {},
+    lastPlayed: [],
     playerState: false,
     readyToListen: false,
     volume: 0.75,
@@ -28,6 +33,18 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 token: action.token,
+            }
+        }
+        case reducerCases.SET_ARTIST_TRACKS: {
+            return {
+                ...state,
+                selectedArtistTracks: action.selectedArtistTracks,
+            }
+        }
+        case reducerCases.SET_ARTIST_ID: {
+            return {
+                ...state,
+                selectedArtistId: action.selectedArtistId,
             }
         }
         case reducerCases.SET_ISOPEN_DELETE_PLAYLIST: {
@@ -46,6 +63,12 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 playlists: action.playlists,
+            }
+        }
+        case reducerCases.SET_LAST_PLAYED: {
+            return {
+                ...state,
+                lastPlayed: action.lastPlayed,
             }
         }
         case reducerCases.SET_NEWEST_SONGS: {

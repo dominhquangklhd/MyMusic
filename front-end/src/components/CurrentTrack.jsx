@@ -72,23 +72,32 @@ export const addTrackToPlaylist = async (token, newTrackId, playlistId) => {
 };
 
 export const downloadAudio = (link) => {
-    const audioUrl = link; 
-
-    axios({
-      url: audioUrl,
-      method: 'GET',
-      responseType: 'blob', 
-    }).then(response => {
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', url.substring(url.lastIndexOf('/') + 1));
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-    }).catch(error => {
-      console.error('Lỗi khi tải xuống tệp âm thanh:', error);
-    });
+    const audioUrl = link;
+  
+    // Hiển thị hộp thoại xác nhận
+    const userConfirmed = window.confirm('Are you sure you want to download this audio file?');
+  
+    // Nếu người dùng chọn "OK"
+    if (userConfirmed) {
+      axios({
+        url: audioUrl,
+        method: 'GET',
+        responseType: 'blob',
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', audioUrl.substring(audioUrl.lastIndexOf('/') + 1));
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      }).catch(error => {
+        console.error('Lỗi khi tải xuống tệp âm thanh:', error);
+      });
+    } else {
+      // Nếu người dùng chọn "Cancel", không làm gì cả
+      console.log('Người dùng đã hủy việc tải xuống.');
+    }
   };
 
 const getCurrentTrack = async (token, dispatch) => {
@@ -164,6 +173,7 @@ export default function CurrentTrack() {
             {currentPlaying && currentPlaying.id && (
                 <div className="track">
                     <div className="track__image">
+                        {console.log(currentPlaying?.image)}
                         <img src={currentPlaying?.image} alt="currentPlaying" />
                     </div>
                     <div className="track__info">

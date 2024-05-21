@@ -76,16 +76,18 @@ export default function Navbar() {
   }, [token, dispatch]);
 
   const logoutUser = () => {
+    navigate('/');
     dispatch({ type: reducerCases.SET_TOKEN, token: null });
     dispatch({ type: reducerCases.SET_PLAYLISTS, playlists: null });
     dispatch({ type: reducerCases.SET_PLAYER_STATE, playerState: false });
     dispatch({ type: reducerCases.SET_PLAYLIST, selectedPlaylist: null });
     dispatch({ type: reducerCases.SET_PLAYLIST_ID, selectedPlaylistId: null });
+    dispatch({ type: reducerCases.SET_LAST_PLAYED, lastPlayed: [] });
     dispatch({
       type: reducerCases.USER_LOGGED_OUT,
     });
     window.location.reload();
-    navigate('/');
+    
     toast.success("You logged out! See you later.");
   }
 

@@ -8,6 +8,7 @@ import Library from './Library';
 import Home from './Home';
 import PlaylistSelected from './PlaylistSelected';
 import SongSelected from './SongSelected';
+import ArtistSelected from './ArtistSelected';
 
 
 const AppRouter = () => {
@@ -21,6 +22,7 @@ const AppRouter = () => {
         <Route path="lib" element={<Library />}></Route>
         <Route path="lib/playlist" element={<PlaylistSelected />}></Route>
         <Route path="songview" element={<SongSelected />}></Route>
+        <Route path="artistview" element={<ArtistSelected />}></Route>
       </Route>
     </Routes>
   );
