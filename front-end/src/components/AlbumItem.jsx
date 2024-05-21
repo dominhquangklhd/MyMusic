@@ -1,4 +1,4 @@
-export default function ArtistItem({ data }) {
+export default function AlbumItem({ data }) {
     return (
         <div
             className="
@@ -25,7 +25,7 @@ export default function ArtistItem({ data }) {
                 overflow-hidden">
                 <img
                     className="object-cover w-full h-full"
-                    src={"http://localhost:8000/static/" + data?.album_image_path}
+                    src={`https://www.gravatar.com/avatar/${data.id.replace(/-/g, "")}?s=64&d=identicon&r=PG`}
                     alt={data?.name}>
                 </img>
             </div>

@@ -13,6 +13,8 @@ export const initialState = {
     selectedSongId: null,
     selectedArtistId: null,
     selectedArtistTracks: null,
+    selectedAlbum: null,
+    selectedAlbumId: null,
 
     newestSongs: null,
     randomSongs: null,
@@ -33,6 +35,18 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 token: action.token,
+            }
+        }
+        case reducerCases.SET_ALBUM: {
+            return {
+                ...state,
+                selectedAlbum: action.selectedAlbum,
+            }
+        }
+        case reducerCases.SET_ALBUM_ID: {
+            return {
+                ...state,
+                selectedAlbumId: action.selectedAlbumId,
             }
         }
         case reducerCases.SET_ARTIST_TRACKS: {
