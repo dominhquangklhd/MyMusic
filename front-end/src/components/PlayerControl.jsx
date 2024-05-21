@@ -49,15 +49,16 @@ export default function PlayerControls() {
     }
 
     const prevPlay = () => {
-        if (lastPlayed.length >=1 ) {
-            setTimeout(3000);
+        if (lastPlayed.length >= 1 ) {
+            
             const len = lastPlayed.length;
             const prevSong = lastPlayed[len - 1];
             const remaining = lastPlayed.slice(0, -1);
             dispatch({ type: reducerCases.SET_LAST_PLAYED, lastPlayed: remaining });      
             if (token)
                 changeTrack(prevSong.id, token, readyToListen, dispatch);
-            else changeTrack(prevSong.id, token, readyToListen, dispatch, prevSong);              
+            else changeTrack(prevSong.id, token, readyToListen, dispatch, prevSong);   
+            setTimeout(3000);           
         }
     }
 

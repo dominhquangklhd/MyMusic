@@ -3,6 +3,7 @@ import SongItem from "./SongItem";
 import { reducerCases } from "../utils/Constants";
 import { Link } from "react-router-dom";
 import ArtistItem from "./ArtistItem";
+import AlbumItem from "./AlbumItem";
 
 export default function SearchContent() {
     const [{ filterItems }, dispatch] = useStateProvider();
@@ -73,12 +74,12 @@ export default function SearchContent() {
                                     <Link to="/artistview" onClick={() => selectArtist(artist?.id)}>
                                         <div className="flex-1 text-white">
                                             <ArtistItem
-                                            data={{
-                                                id: artist?.id,
-                                                name: artist?.name,
-                                                artist_image_path: artist?.artist_image_path,
-                                                description: artist?.description,
-                                            }} />
+                                                data={{
+                                                    id: artist?.id,
+                                                    name: artist?.name,
+                                                    artist_image_path: artist?.artist_image_path,
+                                                    description: artist?.description,
+                                                }} />
                                         </div>
                                     </Link>
                                 </div>
@@ -100,11 +101,13 @@ export default function SearchContent() {
                             gap-4">
                             {filterItems[2].map((album) => (
                                 <div
-                                    key={album?.id}
-                                    className="flex items-center gap-x-4 w-full">
+                                    key={album?.id}>
                                     <div className="flex-1 text-white">
-                                        {/* <SongItem data={album} /> */}
-                                        {album?.name}
+                                        <AlbumItem
+                                            data={{
+                                                id: album?.id,
+                                                name: album?.name,
+                                            }} />
                                     </div>
                                 </div>
                             ))}
