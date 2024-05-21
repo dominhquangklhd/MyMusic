@@ -46,26 +46,35 @@ def healthcheck(request: Request):
         server_info[k] = v
     return server_info
 
+
 admin = Admin(api, engine)
+
 
 class UserAdmin(ModelView, model=models.User):
     column_list = [models.User.id, models.User.username, models.User.email]
 
+
 class TrackAdmin(ModelView, model=models.Track):
     column_list = [models.Track.id, models.Track.name, models.Track.length]
+
 
 class ArtistAdmin(ModelView, model=models.Artist):
     column_list = [models.Artist.id, models.Artist.name, models.Artist.description]
 
+
 class PlaylistAdmin(ModelView, model=models.Playlist):
-    column_list = [models.Playlist.id, models.Playlist.user_id, models.Playlist.name, models.Playlist.tracks]
+    column_list = [
+        models.Playlist.id,
+        models.Playlist.user_id,
+        models.Playlist.name,
+        models.Playlist.tracks,
+    ]
 
 class CategoryAdmin(ModelView, model=models.Category):
     column_list = [models.Category.id, models.Category.name]
 
 class MetaDataAdmin(ModelView, model=models.UserMetadata):
     column_list = [models.UserMetadata.user_id, models.UserMetadata.track_id]
-
 
 
 admin.add_view(UserAdmin)
