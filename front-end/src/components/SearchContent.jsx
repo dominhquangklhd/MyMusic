@@ -17,6 +17,10 @@ export default function SearchContent() {
         dispatch({ type: reducerCases.SET_ARTIST_ID, selectedArtistId: selectedArtistId })
     }
 
+    const selectAlbum = (selectedAlbumId) => {
+        dispatch({ type: reducerCases.SET_ALBUM_ID, selectedAlbumId: selectedAlbumId })
+    }
+
     return (
         <div>
             {!isEmptyFilterItems ? (
@@ -102,13 +106,15 @@ export default function SearchContent() {
                             {filterItems[2].map((album) => (
                                 <div
                                     key={album?.id}>
-                                    <div className="flex-1 text-white">
-                                        <AlbumItem
-                                            data={{
-                                                id: album?.id,
-                                                name: album?.name,
-                                            }} />
-                                    </div>
+                                    <Link to="/albumview" onClick={() => selectAlbum(album?.id)}>
+                                        <div className="flex-1 text-white">
+                                                <AlbumItem
+                                                data={{
+                                                    id: album?.id,
+                                                    name: album?.name,
+                                                }} />
+                                        </div>
+                                    </Link>
                                 </div>
                             ))}
                         </div>

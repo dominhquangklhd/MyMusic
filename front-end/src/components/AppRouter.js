@@ -9,6 +9,7 @@ import Home from './Home';
 import PlaylistSelected from './PlaylistSelected';
 import SongSelected from './SongSelected';
 import ArtistSelected from './ArtistSelected';
+import AlbumSelected from './AlbumSelected';
 
 
 const AppRouter = () => {
@@ -23,6 +24,7 @@ const AppRouter = () => {
         <Route path="lib/playlist" element={<PlaylistSelected />}></Route>
         <Route path="songview" element={<SongSelected />}></Route>
         <Route path="artistview" element={<ArtistSelected />}></Route>
+        <Route path="albumview" element={<AlbumSelected />}></Route>
       </Route>
     </Routes>
   );
